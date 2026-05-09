@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Моя Админка</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+    <h1>Управление</h1>
+    <p>Текущий курс: <b>{{ rate }} ₽</b></p>
+    
+    <form method="POST">
+        <input type="text" name="rate" placeholder="Новый курс">
+        <button type="submit">Изменить курс</button>
+    </form>
+    
+    <hr style="margin: 40px 0;">
+    
+    <h3>Создать QR для сделки в Crypto Bot</h3>
+    <input type="number" id="amt" placeholder="Сумма сделки в рублях">
+    <button onclick="window.open('/generate_qr?amount=' + document.getElementById('amt').value)">
+        ПОЛУЧИТЬ КАРТИНКУ QR
+    </button>
+</body>
+</html>

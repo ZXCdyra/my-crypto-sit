@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>CryptoAnalytics — Доступ к платформе</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f4f4f4; text-align: center; }
+        .hero { background: #ef3124; color: white; padding: 40px; }
+        .card { background: white; max-width: 450px; margin: -30px auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .footer { margin-top: 50px; font-size: 12px; color: #666; padding: 20px; }
+        button { background: #ef3124; color: white; border: none; padding: 15px; width: 100%; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="hero"><h1>CryptoAnalytics</h1><p>Сервис мониторинга цифровых активов</p></div>
+    <div class="card">
+        <h3>Подписка на 1 месяц</h3>
+        <p>Текущая стоимость: <b>{{ rate }} ₽</b></p>
+        <button onclick="alert('Перенаправление на оплату...')">Купить доступ</button>
+    </div>
+    <div class="footer">
+        <a href="/payment-info">Безопасность и оплата</a><br><br>
+        ИП Фамилия Имя | ИНН 1234567890 | ОГРНИП 123456789012345<br>
+        © 2024 Все права защищены.
+    </div>
+</body>
+</html>
+<footer>
+    <div class="footer-links">
+        <a href="/payment-info">Политика конфиденциальности</a>
+        <a href="/payment-info">Условия оплаты</a>
+        <a href="/payment-info">Правила возврата</a>
+    </div>
+    <div class="reквизиты">
+        <strong>ИП ЛЕСНЫХ НАТАЛЬЯ СЕРГЕЕВНА</strong><br>
+        ИНН: 366314033477 | ОГРНИП: 326366800049312<br>
+        Адрес: г. Воронеж, ул. Туполева 16<br>
+        Email: natali.lesnyx@mail.ru | Тел: +7 (952) 559-37-29
+    </div>
+    <p style="margin-top:20px; opacity:0.6;">© 2024 CryptoAnalytics. Все права защищены.</p>
+</footer>
