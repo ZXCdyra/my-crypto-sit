@@ -20,11 +20,22 @@ def index():
         rate = row[0] if row else "83.5"
     return render_template('index.html', rate=rate)
 
+# УСЛОВИЯ ОПЛАТЫ
 @app.route('/payment-info')
 def payment_info():
     return render_template('payment.html')
 
-# ТВОЙ НОВЫЙ СЕКРЕТНЫЙ ВХОД
+# ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ
+@app.route('/policy')
+def policy():
+    return render_template('policy.html')
+
+# ПРАВИЛА ВОЗВРАТА
+@app.route('/return-rules')
+def return_rules():
+    return render_template('return.html')
+
+# ТВОЙ СЕКРЕТНЫЙ ВХОД
 @app.route('/zxc_dyra', methods=['GET', 'POST'])
 def admin():
     init_db()
@@ -49,7 +60,7 @@ def success():
 @app.route('/generate_qr')
 def generate_qr():
     amount = request.args.get('amount', '0')
-    # Ссылка, которая зашита в QR (пока ведет на твою страницу успеха)
+    # Ссылка ведет на страницу успеха твоего сайта
     pay_link = f"https://onrender.com{amount}"
     
     img = qrcode.make(pay_link)
