@@ -14,18 +14,18 @@ def init_db():
 
 @app.route('/')
 def index():
-    init_db() # Принудительно проверяем базу при каждом заходе
+    init_db()
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute('SELECT value FROM settings WHERE key="rate"').fetchone()
-        # Исправлено: безопасное извлечение
-        rate = row[0] if row and row[0] else "83.5"
+        rate = row[0] if row else "83.5"
     return render_template('index.html', rate=rate)
 
 @app.route('/payment-info')
 def payment_info():
     return render_template('payment.html')
 
-@app.route('/my-private-panel', methods=['GET', 'POST'])
+# ТВОЙ НОВЫЙ СЕКРЕТНЫЙ ВХОД
+@app.route('/zxc_dyra', methods=['GET', 'POST'])
 def admin():
     init_db()
     if request.method == 'POST':
@@ -37,14 +37,20 @@ def admin():
     
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute('SELECT value FROM settings WHERE key="rate"').fetchone()
-        rate = row[0] if row and row[0] else "83.5"
+        rate = row[0] if row else "83.5"
     return render_template('admin.html', rate=rate)
 
+# СТРАНИЦА УСПЕШНОЙ ОПЛАТЫ
+@app.route('/success')
+def success():
+    return render_template('success.html')
+
+# ГЕНЕРАТОР QR
 @app.route('/generate_qr')
 def generate_qr():
     amount = request.args.get('amount', '0')
-    # Добавил пропущенный параметр для ссылки
-    pay_link = f"https://alfa-bank.ru{amount}"
+    # Ссылка, которая зашита в QR (пока ведет на твою страницу успеха)
+    pay_link = f"https://onrender.com{amount}"
     
     img = qrcode.make(pay_link)
     buf = BytesIO()
