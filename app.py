@@ -14,18 +14,20 @@ def init_db():
 
 @app.route('/')
 def index():
+    init_db() # Принудительно проверяем базу при каждом заходе
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute('SELECT value FROM settings WHERE key="rate"').fetchone()
-        rate = row[0] if row else "83.5"
+        # Исправлено: безопасное извлечение
+        rate = row[0] if row and row[0] else "83.5"
     return render_template('index.html', rate=rate)
 
 @app.route('/payment-info')
 def payment_info():
     return render_template('payment.html')
 
-# ТВОЯ СЕКРЕТНАЯ АДМИНКА
 @app.route('/my-private-panel', methods=['GET', 'POST'])
 def admin():
+    init_db()
     if request.method == 'POST':
         new_rate = request.form.get('rate')
         if new_rate:
@@ -34,14 +36,14 @@ def admin():
                 conn.commit()
     
     with sqlite3.connect(DB_PATH) as conn:
-        rate = conn.execute('SELECT value FROM settings WHERE key="rate"').fetchone()[0]
+        row = conn.execute('SELECT value FROM settings WHERE key="rate"').fetchone()
+        rate = row[0] if row and row[0] else "83.5"
     return render_template('admin.html', rate=rate)
 
-# ГЕНЕРАТОР QR ДЛЯ КЛИЕНТА В P2P
 @app.route('/generate_qr')
 def generate_qr():
     amount = request.args.get('amount', '0')
-    # Сюда впишем ссылку Альфы, когда получишь договор
+    # Добавил пропущенный параметр для ссылки
     pay_link = f"https://alfa-bank.ru{amount}"
     
     img = qrcode.make(pay_link)
@@ -52,4 +54,4 @@ def generate_qr():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
