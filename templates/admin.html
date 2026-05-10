@@ -22,3 +22,19 @@
     </button>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Панель управления</title></head>
+<body style="font-family:sans-serif; text-align:center; padding:50px;">
+    <h1>Настройки Агента</h1>
+    <form method="POST" style="background:#f4f4f4; padding:20px; display:inline-block; border-radius:10px;">
+        <p>Чистый курс закупа ($): <br><input type="text" name="rate" value="{{ rate }}" style="padding:10px;"></p>
+        <p>Ваша комиссия (%): <br><input type="text" name="commission" value="{{ commission }}" style="padding:10px;"></p>
+        <button type="submit" style="padding:10px 20px; background:red; color:white; border:none; cursor:pointer;">Сохранить</button>
+    </form>
+    <hr style="margin:40px 0;">
+    <h3>Создать QR для P2P сделки</h3>
+    <input type="number" id="amt" placeholder="Сумма в рублях" style="padding:10px;">
+    <button onclick="window.open('/generate_qr?amount=' + document.getElementById('amt').value)" style="padding:10px;">Получить картинку QR</button>
+</body>
+</html>
