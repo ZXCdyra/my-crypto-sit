@@ -2,39 +2,48 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Моя Админка</title>
+    <title>Панель управления — CryptoAnalytics</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f9f9f9; }
+        .box { background: white; padding: 30px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; }
+        input { padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; width: 200px; }
+        .btn-red { padding: 10px 20px; background: #ef3124; color: white; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .btn-green { display: inline-block; background: #27ae60; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        hr { margin: 40px 0; border: 0; border-top: 1px solid #eee; }
+    </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 50px;">
-    <h1>Управление</h1>
-    <p>Текущий курс: <b>{{ rate }} ₽</b></p>
-    
-    <form method="POST">
-        <input type="text" name="rate" placeholder="Новый курс">
-        <button type="submit">Изменить курс</button>
-    </form>
-    
-    <hr style="margin: 40px 0;">
-    
-    <h3>Создать QR для сделки в Crypto Bot</h3>
-    <input type="number" id="amt" placeholder="Сумма сделки в рублях">
-    <button onclick="window.open('/generate_qr?amount=' + document.getElementById('amt').value)">
-        ПОЛУЧИТЬ КАРТИНКУ QR
-    </button>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="UTF-8"><title>Панель управления</title></head>
-<body style="font-family:sans-serif; text-align:center; padding:50px;">
-    <h1>Настройки Агента</h1>
-    <form method="POST" style="background:#f4f4f4; padding:20px; display:inline-block; border-radius:10px;">
-        <p>Чистый курс закупа ($): <br><input type="text" name="rate" value="{{ rate }}" style="padding:10px;"></p>
-        <p>Ваша комиссия (%): <br><input type="text" name="commission" value="{{ commission }}" style="padding:10px;"></p>
-        <button type="submit" style="padding:10px 20px; background:red; color:white; border:none; cursor:pointer;">Сохранить</button>
-    </form>
-    <hr style="margin:40px 0;">
-    <h3>Создать QR для P2P сделки</h3>
-    <input type="number" id="amt" placeholder="Сумма в рублях" style="padding:10px;">
-    <button onclick="window.open('/generate_qr?amount=' + document.getElementById('amt').value)" style="padding:10px;">Получить картинку QR</button>
+<body>
+
+    <div class="box">
+        <h1>Настройки Агента</h1>
+        <p>Текущие параметры: <b>{{ rate }} ₽</b> | <b>{{ commission }}%</b></p>
+        
+        <form method="POST">
+            <label>Чистый курс закупа ($):</label><br>
+            <input type="text" name="rate" value="{{ rate }}"><br>
+            
+            <label>Ваша комиссия (%):</label><br>
+            <input type="text" name="commission" value="{{ commission }}"><br>
+            
+            <button type="submit" class="btn-red">СОХРАНИТЬ НАСТРОЙКИ</button>
+        </form>
+
+        <hr>
+
+        <h3>Создать QR для сделки в Crypto Bot</h3>
+        <p>Введите полную сумму, которую должен оплатить клиент:</p>
+        <input type="number" id="amt" placeholder="Сумма в рублях">
+        <button class="btn-red" onclick="window.open('/generate_qr?amount=' + document.getElementById('amt').value)">
+            ПОЛУЧИТЬ КАРТИНКУ QR
+        </button>
+
+        <hr>
+
+        <h3>Бухгалтерия</h3>
+        <a href="/download_report" class="btn-green">
+            СКАЧАТЬ ОТЧЕТ АГЕНТА (Excel/CSV)
+        </a>
+    </div>
+
 </body>
 </html>

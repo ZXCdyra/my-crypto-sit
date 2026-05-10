@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
-import sqlite3, os, qrcode
-from io import BytesIO
+from flask import Flask, render_template, request, send_file, redirect, url_for, make_response
+import sqlite3, os, qrcode, csv
+from io import BytesIO, StringIO
+from datetime import datetime
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -9,6 +10,8 @@ DB_PATH = os.path.join(BASE_DIR, 'database.db')
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)')
+        # Добавляем таблицу для учета сделок
+        conn.execute('CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, total REAL, reward REAL)')
         conn.execute('INSERT OR IGNORE INTO settings (key, value) VALUES ("rate", "83.5")')
         conn.execute('INSERT OR IGNORE INTO settings (key, value) VALUES ("commission", "5")')
         conn.commit()
@@ -25,7 +28,6 @@ def get_settings():
 def index():
     init_db()
     rate, comm = get_settings()
-    # Расчет цены для витрины: чистый курс + комиссия
     total_price = round(float(rate) * (1 + float(comm)/100), 2)
     return render_template('index.html', rate=total_price)
 
@@ -46,10 +48,38 @@ def admin():
     rate, comm = get_settings()
     return render_template('admin.html', rate=rate, commission=comm)
 
+# НОВЫЙ МАРШРУТ ДЛЯ СКАЧИВАНИЯ ОТЧЕТА
+@app.route('/download_report')
+def download_report():
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['ID', 'Дата и время', 'Сумма сделки (руб)', 'Доход ИП (5% комиссия)'])
+    
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute('SELECT * FROM orders ORDER BY id DESC').fetchall()
+        cw.writerows(rows)
+    
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=otchet_agenta.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
 @app.route('/generate_qr')
 def generate_qr():
-    amount = request.args.get('amount', '0')
-    # Ссылка для теста (заменишь на Альфу потом)
+    amount_str = request.args.get('amount', '0')
+    amount = float(amount_str) if amount_str else 0
+    
+    # Считаем твой доход (комиссию) для записи в базу
+    rate, comm = get_settings()
+    reward = round(amount * (float(comm) / (100 + float(comm))), 2)
+
+    # Записываем сделку в отчет при каждой генерации QR
+    if amount > 0:
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.execute('INSERT INTO orders (date, total, reward) VALUES (?, ?, ?)', 
+                         (datetime.now().strftime("%d.%m.%Y %H:%M"), amount, reward))
+            conn.commit()
+
     pay_link = f"https://onrender.com{amount}"
     img = qrcode.make(pay_link)
     buf = BytesIO()
