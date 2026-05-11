@@ -21,7 +21,6 @@
         
         .main-container { max-width: 1350px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 30px; padding: 40px 20px; }
 
-        /* БЛОК УСЛУГ ВМЕСТО ГРАФИКА */
         .services-grid { display: grid; gap: 20px; }
         .service-item { background: var(--card); border-radius: 24px; border: 1px solid #30363d; padding: 30px; transition: 0.4s; position: relative; overflow: hidden; }
         .service-item:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -38,6 +37,8 @@
         footer { padding: 60px 20px; border-top: 1px solid #30363d; background: #010409; margin-top: 80px; text-align: center; font-size: 12px; color: var(--text-dim); }
         .footer-link { color: var(--text-dim); text-decoration: none; margin: 0 15px; transition: 0.2s; }
         .footer-link:hover { color: #fff; }
+        .fk-banner { margin-bottom: 25px; opacity: 0.7; transition: 0.3s; }
+        .fk-banner:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -47,7 +48,6 @@
 <div class="hero"><h1>Terminal <br> <span style="color: var(--accent); text-shadow: 0 0 30px var(--neon);">Institutional</span></h1></div>
 
 <div class="main-container">
-    <!-- СЕКЦИЯ УСЛУГ -->
     <div class="services-grid">
         <div class="service-item">
             <h2>Потоковый мониторинг</h2>
@@ -78,13 +78,12 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ ОПЛАТЫ -->
     <div class="payment-panel">
         <div class="service-item" style="position: sticky; top: 150px;">
             <div style="color:var(--accent); font-weight:bold; font-size:12px; margin-bottom:10px; text-transform:uppercase;">Daily Subscription</div>
             <div class="price-row"><span class="val">{{ rate }}</span><span style="color:var(--text-dim); font-size:18px;"> ₽ / сутки</span></div>
             <p style="color:var(--text-dim); font-size:13px; margin-bottom:25px;">Лицензионный доступ к полному пакету инструментов мониторинга на 24 часа.</p>
-            <button class="action-btn" onclick="alert('Переход на защищенный шлюз АО АЛЬФА-БАНК...')">Активировать</button>
+            <button class="action-btn" onclick="alert('Переход на защищенный шлюз...')">Активировать</button>
             <div style="font-size:10px; color:#484f58; margin-top:20px; text-align:left; border-top:1px solid #333; padding-top:10px;">
                 Доходом ИП ЛЕСНЫХ Н.С. является исключительно агентское вознаграждение (5%). Ст. 251 и 346.15 НК РФ.
             </div>
@@ -93,8 +92,22 @@
 </div>
 
 <footer>
-    <div style="margin-bottom:20px;"><a href="/policy" class="footer-link">Privacy</a><a href="/offer" class="footer-link">Offer</a><a href="/return-rules" class="footer-link">Refunds</a></div>
-    <strong>ИП ЛЕСНЫХ НАТАЛЬЯ СЕРГЕЕВНА</strong><br>ИНН 366314033477 | ОГРНИП 326366800049312<br>natali.lesnyx@mail.ru
+    <div style="margin-bottom:20px;">
+        <a href="/policy" class="footer-link">Privacy</a>
+        <a href="/offer" class="footer-link">Offer</a>
+        <a href="/return-rules" class="footer-link">Refunds</a>
+    </div>
+
+    <!-- Баннер FreeKassa для подтверждения -->
+    <div class="fk-banner">
+        <a href="https://freekassa.net" target="_blank" rel="noopener noreferrer">
+            <img src="https://freekassa.net" title="Прием платежей на сайте" style="width: 160px; height: auto;">
+        </a>
+    </div>
+
+    <strong>ИП ЛЕСНЫХ НАТАЛЬЯ СЕРГЕЕВНА</strong><br>
+    ИНН 366314033477 | ОГРНИП 326366800049312<br>
+    natali.lesnyx@mail.ru
 </footer>
 </body>
 </html>
