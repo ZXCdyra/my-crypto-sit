@@ -78,19 +78,32 @@ def download_report():
     output.headers["Content-type"] = "text/csv"
     return output
 
+# ЮРИДИЧЕСКИЕ СТРАНИЦЫ ДЛЯ LAVA
+@app.route('/policy')
+def policy(): 
+    return "<h1>Политика конфиденциальности</h1><p>ИП ЛЕСНЫХ НАТАЛЬЯ СЕРГЕЕВНА (ИНН 366314033477) обязуется не передавать персональные данные третьим лицам. Сбор данных осуществляется исключительно для предоставления доступа к сервису Analytics Pro.</p><a href='/'>Назад на сайт</a>"
+
+@app.route('/return-rules')
+def return_rules(): 
+    return "<h1>Условия возврата</h1><p>Согласно законодательству РФ, возврат денежных средств за цифровые продукты (лицензионные ключи, доступ к ПО) после их активации или предоставления доступа не производится. При возникновении технических проблем, пожалуйста, пишите на natali.lesnyx@mail.ru.</p><a href='/'>Назад на сайт</a>"
+
+@app.route('/offer')
+def offer(): 
+    return """<h1>Публичная оферта</h1>
+    <p>Настоящая оферта является официальным предложением ИП ЛЕСНЫХ Н.С. заключить договор на предоставление лицензионного доступа к аналитическому ПО.</p>
+    <ul>
+        <li>Услуга: Доступ к терминалу Analytics Pro на 24 часа.</li>
+        <li>Стоимость: Указывается в интерфейсе оплаты.</li>
+        <li>Порядок: Доступ предоставляется мгновенно после подтверждения транзакции.</li>
+    </ul>
+    <a href='/'>Назад на сайт</a>"""
+
 @app.route('/payment-info')
 def payment_info(): return render_template('payment.html')
-@app.route('/policy')
-def policy(): return render_template('policy.html')
-@app.route('/return-rules')
-def return_rules(): return render_template('return.html')
-@app.route('/offer')
-def offer(): return render_template('offer.html')
+
 @app.route('/success')
 def success(): return render_template('success.html')
 
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
-
-
