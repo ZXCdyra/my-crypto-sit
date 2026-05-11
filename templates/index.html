@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Pro | Institutional Data Stream</title>
+    
+    <!-- МЕТАТЕГ ВЕРИФИКАЦИИ LAVA -->
+    <meta name="lava-verify" content="ca075caffa677fb7" />
+
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root { --accent: #ef3124; --surface: #0a0c10; --card: #161a22; --text-dim: #848d97; --neon: rgba(239, 49, 36, 0.4); }
@@ -34,11 +38,9 @@
         .action-btn { background: var(--accent); color: #fff; border: none; padding: 22px; width: 100%; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 0 15px var(--neon); }
         .action-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent); background: #ff453a; }
 
-        footer { padding: 60px 20px; border-top: 1px solid #30363d; background: #010409; margin-top: 80px; text-align: center; font-size: 12px; color: var(--text-dim); }
+        footer { padding: 60px 20px; border-top: 1px solid #30363d; background: #010409; margin-top: 80px; text-align: center; font-size: 12px; color: var(--text-dim); line-height: 1.6; }
         .footer-link { color: var(--text-dim); text-decoration: none; margin: 0 15px; transition: 0.2s; }
         .footer-link:hover { color: #fff; }
-        .fk-banner { margin-bottom: 25px; opacity: 0.7; transition: 0.3s; }
-        .fk-banner:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -83,7 +85,7 @@
             <div style="color:var(--accent); font-weight:bold; font-size:12px; margin-bottom:10px; text-transform:uppercase;">Daily Subscription</div>
             <div class="price-row"><span class="val">{{ rate }}</span><span style="color:var(--text-dim); font-size:18px;"> ₽ / сутки</span></div>
             <p style="color:var(--text-dim); font-size:13px; margin-bottom:25px;">Лицензионный доступ к полному пакету инструментов мониторинга на 24 часа.</p>
-            <button class="action-btn" onclick="alert('Переход на защищенный шлюз...')">Активировать</button>
+            <button class="action-btn" onclick="alert('Переход на платежный шлюз...')">Активировать</button>
             <div style="font-size:10px; color:#484f58; margin-top:20px; text-align:left; border-top:1px solid #333; padding-top:10px;">
                 Доходом ИП ЛЕСНЫХ Н.С. является исключительно агентское вознаграждение (5%). Ст. 251 и 346.15 НК РФ.
             </div>
@@ -100,7 +102,8 @@
 
     <strong>ИП ЛЕСНЫХ НАТАЛЬЯ СЕРГЕЕВНА</strong><br>
     ИНН 366314033477 | ОГРНИП 326366800049312<br>
-    natali.lesnyx@mail.ru
+    Адрес: г. Воронеж, ул. (впиши свою), д. (впиши свой)<br>
+    Тел: +7 (9xx) xxx-xx-xx | Email: natali.lesnyx@mail.ru
 </footer>
 </body>
 </html>
