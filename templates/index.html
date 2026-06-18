@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -146,10 +146,11 @@
             padding: 24px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            min-width: 0; /* Важно для адаптивности Chart.js */
+            min-height: 350px;
+            min-width: 0;
         }
 
-        /* Тот самый маленький квадратик справа */
+        /* Маленький квадратик справа */
         .rates-badge {
             flex: 1;
             max-width: 260px;
@@ -224,16 +225,15 @@
         </header>
 
         <main class="content-area">
+            <!-- Главная вкладка -->
             <div id="main" class="tab-content active">
                 <h1>Главная страница</h1>
                 
-                <!-- Блок с графиком и ставками -->
                 <div class="dashboard-row">
                     <div class="chart-container">
                         <canvas id="earningsChart"></canvas>
                     </div>
                     
-                    <!-- Маленький информационный квадратик справа -->
                     <div class="rates-badge">
                         <div class="rate-row">
                             <span class="rate-range">100 - 999</span>
@@ -247,139 +247,167 @@
                             <span class="rate-range">5000 - 30000</span>
                             <span class="rate-percent">7%</span>
                         </div>
-                    </div><script>
-    // База данных из 10 аккаунтов со случайными логинами и сложными паролями
-    const usersDB = [
-        { id: 1, login: "alphanode", pass: "kX9!v2mP" },
-        { id: 2, login: "vortex_dev", pass: "bN4@7tZs" },
-        { id: 3, login: "shadow_fox", pass: "mL1$qR9x" },
-        { id: 4, login: "cyber_pixel", pass: "wP8#5jYt" },
-        { id: 5, login: "nexus_user", pass: "gH3&dT6k" },
-        { id: 6, login: "quantum_7", pass: "cC5(mK2w" },
-        { id: 7, login: "iron_forge", pass: "rX1)9zLb" },
-        { id: 8, login: "apex_pred", pass: "fV7*4pQs" },
-        { id: 9, login: "matrix_code", pass: "tN3_8vHm" },
-        { id: 10, login: "stellar_sky", pass: "jK2!6xYw" }
-    ];
-
-    let earningsChart = null;
-
-    function checkAuth() {
-        const currentUserId = sessionStorage.getItem('currentUserId');
-        if (currentUserId) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('user-id').innerText = currentUserId;
-            document.getElementById('user-balance').innerText = '0.00 ₽';
-            resetToMainContent();
-            initChart(); // Инициализируем график при успешном входе
-        } else {
-            document.getElementById('login-screen').style.display = 'flex';
-        }
-        setTheme(localStorage.getItem('theme') || 'white');
-    }
-
-    function tryLogin() {
-        const loginInput = document.getElementById('username').value.trim();
-        const passInput = document.getElementById('password').value.trim();
-        const errorText = document.getElementById('error-text');
-
-        const user = usersDB.find(u => u.login === loginInput && u.pass === passInput);
-
-        if (user) {
-            sessionStorage.setItem('currentUserId', user.id);
-            errorText.style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            checkAuth();
-        } else {
-            errorText.style.display = 'block';
-        }
-    }
-
-    function logout() {
-        if (earningsChart) {
-            earningsChart.destroy();
-            earningsChart = null;
-        }
-        sessionStorage.removeItem('currentUserId');
-        checkAuth();
-    }
-
-    function openTab(e, tabId) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if (e && e.currentTarget) {
-            e.currentTarget.classList.add('active');
-        }
-    }
-
-    function resetToMainContent() {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('main').classList.add('active');
-        document.getElementById('btn-main').classList.add('active');
-    }
-
-    function setTheme(themeName) {
-        if (themeName === 'white') document.documentElement.removeAttribute('data-theme');
-        else document.documentElement.setAttribute('data-theme', themeName);
-        localStorage.setItem('theme', themeName);
-        
-        // Динамически перерисовываем сетку графика под выбранную тему
-        if (earningsChart) {
-            const textStyle = themeName === 'black' ? '#f9fafb' : '#0f172a';
-            const gridStyle = themeName === 'black' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                    </div>
+                </div>
+            </div>
             
-            earningsChart.options.scales.x.grid.color = gridStyle;
-            earningsChart.options.scales.y.grid.color = gridStyle;
-            earningsChart.options.scales.x.ticks.color = textStyle;
-            earningsChart.options.scales.y.ticks.color = textStyle;
-            earningsChart.options.plugins.legend.labels.color = textStyle;
-            earningsChart.update();
-        }
-    }
+            <!-- Остальные вкладки -->
+ <!-- Остальные вкладки -->
+            <div id="deals" class="tab-content"><h1>Сделки</h1><div class="card"><p>Список сделок.</p></div></div>
+            <div id="appeals" class="tab-content"><h1>Апелляции</h1><div class="card"><p>История споров.</p></div></div>
+            <div id="payouts" class="tab-content"><h1>Выплаты</h1><div class="card"><p>Запросы выплат.</p></div></div>
+            <div id="devices" class="tab-content"><h1>Устройства</h1><div class="card"><p>Подключенные устройства.</p></div></div>
+            <div id="settings" class="tab-content">
+                <h1>Настройки</h1>
+                <div class="card">
+                    <h3>Выбор темы:</h3>
+                    <div class="theme-switcher">
+                        <button class="theme-btn" onclick="setTheme('white')">Белая</button>
+                        <button class="theme-btn" onclick="setTheme('gray')">Серая</button>
+                        <button class="theme-btn" onclick="setTheme('black')">Черная</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
-    // Логика построения графика заработанных средств
-    function initChart() {
-        const ctx = document.getElementById('earningsChart').getContext('2d');
-        
-        // Если график уже был создан — удаляем его перед созданием нового
-        if (earningsChart) {
-            earningsChart.destroy();
-        }
+    <!-- Исправленный и цельный скрипт логики -->
+    <script>
+        const usersDB = [
+            { id: 1, login: "alphanode", pass: "kX9!v2mP", balance: "1450.00", chartData: [100, 150, 300, 250, 400, 550, 700] },
+            { id: 2, login: "vortex_dev", pass: "bN4@7tZs", balance: "8900.50", chartData: [500, 700, 600, 900, 1200, 1100, 1500] },
+            { id: 3, login: "shadow_fox", pass: "mL1$qR9x", balance: "0.00",    chartData: [0, 0, 0, 0, 0, 0, 0] },
+            { id: 4, login: "cyber_pixel", pass: "wP8#5jYt", balance: "320.00",  chartData: [50, 30, 70, 40, 90, 60, 120] },
+            { id: 5, login: "nexus_user", pass: "gH3&dT6k", balance: "12050.00", chartData: [1000, 1500, 1300, 1800, 2200, 2500, 3000] },
+            { id: 6, login: "quantum_7", pass: "cC5(mK2w", balance: "550.00",  chartData: [100, 80, 120, 90, 150, 130, 200] },
+            { id: 7, login: "iron_forge", pass: "rX1)9zLb", balance: "24100.00", chartData: [2000, 2500, 3100, 2800, 3500, 4200, 5000] },
+            { id: 8, login: "apex_pred", pass: "fV7*4pQs", balance: "7500.00",  chartData: [400, 600, 550, 800, 1000, 950, 1300] },
+            { id: 9, login: "matrix_code", pass: "tN3_8vHm", balance: "430.00",  chartData: [40, 60, 50, 80, 70, 90, 110] },
+            { id: 10, login: "stellar_sky", pass: "jK2!6xYw", balance: "1850.00", chartData: [200, 250, 400, 350, 500, 600, 800] }
+        ];
 
-        const currentTheme = localStorage.getItem('theme') || 'white';
-        const textStyle = currentTheme === 'black' ? '#f9fafb' : '#0f172a';
-        const gridStyle = currentTheme === 'black' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+        let earningsChart = null;
 
-        earningsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], // Дни недели
-                datasets: [{
-                    label: 'Заработано средств (₽)',
-                    data:, // ИСПРАВЛЕНО: Добавлены демонстрационные данные заработка
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3 // Плавность изгибов линии
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { labels: { color: textStyle } }
-                },
-                scales: {
-                    x: { grid: { color: gridStyle }, ticks: { color: textStyle } },
-                    y: { grid: { color: gridStyle }, ticks: { color: textStyle } }
+        function checkAuth() {
+            const currentUserId = sessionStorage.getItem('currentUserId');
+            if (currentUserId) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('user-id').innerText = currentUserId;
+                
+                const currentUser = usersDB.find(u => u.id == currentUserId);
+                if (currentUser) {
+                    document.getElementById('user-balance').innerText = parseFloat(currentUser.balance).toFixed(2) + ' ₽';
                 }
-            }
-        });
-    }
 
-    window.onload = checkAuth;
-</script>
+                resetToMainContent();
+                initChart(currentUser ? currentUser.chartData : [0, 0, 0, 0, 0, 0, 0]); 
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+            setTheme(localStorage.getItem('theme') || 'white');
+        }
+
+        function tryLogin() {
+            const loginInput = document.getElementById('username').value.trim();
+            const passInput = document.getElementById('password').value.trim();
+            const errorText = document.getElementById('error-text');
+
+            const user = usersDB.find(u => u.login === loginInput && u.pass === passInput);
+
+            if (user) {
+                sessionStorage.setItem('currentUserId', user.id);
+                errorText.style.display = 'none';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                checkAuth();
+            } else {
+                errorText.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            if (earningsChart) {
+                earningsChart.destroy();
+                earningsChart = null;
+            }
+            sessionStorage.removeItem('currentUserId');
+            checkAuth();
+        }
+
+        function openTab(e, tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (e && e.currentTarget) {
+                e.currentTarget.classList.add('active');
+            }
+        }
+
+        function resetToMainContent() {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('main').classList.add('active');
+            document.getElementById('btn-main').classList.add('active');
+        }
+
+        function setTheme(themeName) {
+            if (themeName === 'white') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+            
+            if (earningsChart) {
+                const textStyle = themeName === 'black' ? '#f9fafb' : '#0f172a';
+                const gridStyle = themeName === 'black' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                
+                earningsChart.options.scales.x.grid.color = gridStyle;
+                earningsChart.options.scales.y.grid.color = gridStyle;
+                earningsChart.options.scales.x.ticks.color = textStyle;
+                earningsChart.options.scales.y.ticks.color = textStyle;
+                earningsChart.options.plugins.legend.labels.color = textStyle;
+                earningsChart.update();
+            }
+        }
+
+        function initChart(chartData) {
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            
+            if (earningsChart) {
+                earningsChart.destroy();
+            }
+
+            const currentTheme = localStorage.getItem('theme') || 'white';
+            const textStyle = currentTheme === 'black' ? '#f9fafb' : '#0f172a';
+            const gridStyle = currentTheme === 'black' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
+            earningsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                    datasets: [{
+                        label: 'Заработано средств (₽)',
+                        data: chartData,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textStyle } }
+                    },
+                    scales: {
+                        x: { grid: { color: gridStyle }, ticks: { color: textStyle } },
+                        y: { grid: { color: gridStyle }, ticks: { color: textStyle } }
+                    }
+                }
+            });
+        }
+
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>
