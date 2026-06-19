@@ -4,41 +4,44 @@ from playwright.sync_api import sync_playwright
 
 app = Flask(__name__)
 
-# Общая функция авторизации
 def login_to_rosplat(p):
+    # Добавлен эмуляционный юзер-агент, чтобы сайт не видел, что это робот
     browser = p.chromium.launch(headless=True)
-    context = browser.new_context()
+    context = browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
     page = context.new_page()
     
-    page.goto("https://trade.rosplat.cash/")
+    print("Открываем страницу логина...")
+    page.goto("https://rosplat.cash", timeout=30000)
     
-    # Заполнение формы авторизации
     page.fill('input[placeholder*="Логин"], input[type="text"], input[type="email"]', 'Solevoi')
     page.fill('input[type="password"]', '112nataliA')
     page.click('button[type="submit"]')
     
-    # Ждем, пока исчезнет форма входа и прогрузится основной интерфейс
     page.wait_for_load_state("networkidle")
+    print("Авторизация выполнена успешно.")
     return browser, page
 
-# Универсальный парсер таблиц РосПлата с защитой от долгой загрузки React/Vue
 def parse_table_data(page, url):
-    page.goto(url)
+    print(f"Переходим на страницу: {url}")
+    page.goto(url, timeout=30000)
     try:
-        # ИСПРАВЛЕНО: Ждем загрузки именно строк таблицы (tr) или ячеек (td) до 15 секунд
         page.wait_for_selector("table, tr, td, .table", timeout=15000)
-        # Даем еще 1 секунду на полную отрисовку скриптов РосПлата
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(2000) # Даем время дорендерить React-таблицу
     except Exception as e:
-        print(f"Ошибка ожидания таблицы на {url}: {e}")
+        print(f"Таблица не найдена или пуста на {url}. Ошибка: {e}")
+        # Сохраняем скриншот для отладки, чтобы увидеть, что там происходит
+        page.screenshot(path="error_screenshot.png")
         return []
         
     data_list = []
     rows = page.query_selector_all("tr")
+    print(f"Найдено строк таблицы: {len(rows)}")
+    
     for row in rows:
         cells = row.query_selector_all("td")
         if cells and len(cells) >= 4:
-            # Собираем текстовое содержимое всех ячеек в строке
             data_list.append([cell.inner_text().strip() for cell in cells])
     return data_list
 
@@ -46,13 +49,12 @@ def parse_table_data(page, url):
 def home():
     return render_template('index.html')
 
-# API для Сделок
 @app.route('/api/rosplat-data')
 def get_deals():
     try:
         with sync_playwright() as p:
             browser, page = login_to_rosplat(p)
-            raw_data = parse_table_data(page, "https://trade.rosplat.cash/dashboard/deals/all")
+            raw_data = parse_table_data(page, "https://rosplat.cashdashboard/deals/all")
             browser.close()
             
             deals = []
@@ -66,19 +68,16 @@ def get_deals():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# API для Выплат с ИСПРАВЛЕННЫМ реальным URL-адресом
 @app.route('/api/rosplat-payouts')
 def get_payouts():
     try:
         with sync_playwright() as p:
             browser, page = login_to_rosplat(p)
-            # ИСПРАВЛЕНО: Установлен ваш точный адрес страницы выплат
-            raw_data = parse_table_data(page, "https://trade.rosplat.cash/dashboard/payoutrequests/pending")
+            raw_data = parse_table_data(page, "https://rosplat.cashdashboard/payoutrequests/pending")
             browser.close()
             
             payouts = []
             for row in raw_data:
-                # Нарезаем строки под формат таблицы выплат РосПлата
                 payouts.append({
                     "id": row[0] if len(row) > 0 else "---",
                     "method": row[1] if len(row) > 1 else "---",
