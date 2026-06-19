@@ -246,7 +246,6 @@
         </main>
     </div>
 
-    <!-- Исправленный и цельный скрипт логики -->
     <script>
         const usersDB = [
             { id: 1, login: "alphanode", pass: "kX9!v2mP", balance: "1450.00", chartData: [100, 150, 300, 250, 400, 550, 700] },
@@ -275,7 +274,7 @@
                 }
 
                 resetToMainContent();
-                initChart(currentUser ? currentUser.chartData : [0, 0, 0, 0, 0, 0, 0]); 
+                initChart(currentUser ? currentUser.chartData : [0,0,0,0,0,0,0]); 
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
             }
@@ -309,6 +308,61 @@
             checkAuth();
         }
 
+        // --- ДОБАВЛЕНО И ИСПРАВЛЕНО НАЧАЛО БЛОКА ---
+        
+        // Функция, которая запрашивает данные у вашего app.py и выводит их в новом формате
+        async function loadDealsFromRosplat() {
+            const dealsContainer = document.getElementById('deals');
+            
+            // Анимация загрузки
+            dealsContainer.innerHTML = '<h1>Сделки</h1><div class="card"><p>Синхронизация с РосПлат... Пожалуйста, подождите.</p></div>';
+            
+            try {
+                const response = await fetch('/api/rosplat-data');
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.data.length > 0) {
+                    let tableHTML = `
+                        <h1>Активные сделки</h1>
+                        <div class="card" style="overflow-x: auto; padding: 0; margin-top: 20px;">
+                            <table style="width:100%; border-collapse: collapse; text-align:left; font-size: 0.95rem;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--border-color); background-color: var(--bg-body); font-weight:600; color: var(--text-muted);">
+                                        <td style="padding:15px;">ID</td>
+                                        <td style="padding:15px;">Банк</td>
+                                        <td style="padding:15px;">Метод</td>
+                                        <td style="padding:15px;">Реквизиты</td>
+                                        <td style="padding:15px;">Сумма</td>
+                                        <td style="padding:15px;">Время и Дата</td>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+                    
+                    result.data.forEach(item => {
+                        tableHTML += `
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding:15px; font-weight:600; color: #2563eb;">${item.id}</td>
+                                <td style="padding:15px; font-weight: 500;">${item.bank}</td>
+                                <td style="padding:15px;"><span style="background: var(--bg-body); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">${item.method}</span></td>
+                                <td style="padding:15px; font-family: monospace; letter-spacing: 0.5px;">${item.credentials}</td>
+                                <td style="padding:15px; font-weight:600; color: #10b981; font-size: 1rem;">${item.amount}</td>
+                                <td style="padding:15px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                                    <strong>${item.time}</strong><br>${item.date}
+                                </td>
+                            </tr>`;
+                    });
+                    
+                    tableHTML += `</tbody></table></div>`;
+                    dealsContainer.innerHTML = tableHTML;
+                } else {
+                    dealsContainer.innerHTML = '<h1>Сделки</h1><div class="card"><p>Активных сделок в данный момент не найдено.</p></div>';
+                }
+            } catch (error) {
+                dealsContainer.innerHTML = '<h1>Сделки</h1><div class="card"><p style="color:red;">Ошибка получения данных: ' + error.message + '</p></div>';
+            }
+        }
+
+        // Модифицированная функция переключения вкладок, чтобы при нажатии на "Сделки" запускался сбор данных
         function openTab(e, tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
@@ -316,7 +370,14 @@
             if (e && e.currentTarget) {
                 e.currentTarget.classList.add('active');
             }
+            
+            // Если пользователь перешел в раздел сделок — инициируем запрос к РосПлат
+            if (tabId === 'deals') {
+                loadDealsFromRosplat();
+            }
         }
+
+        // --- КОНЕЦ ИЗМЕНЕНИЙ ---
 
         function resetToMainContent() {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -379,5 +440,3 @@
 
         window.onload = checkAuth;
     </script>
-</body>
-</html>
