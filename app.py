@@ -8,10 +8,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
-# СЮДА ВСТАВЬТЕ ВАШ СВЕЖИЙ Bearer-ТОКЕН, ЕСЛИ ОН ОБНОВИЛСЯ ПОСЛЕ ВВОДА КАПЧИ
-ROSPLAT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidHJhZGVyIiwiaWQiOjMzMzgzOCwibG9naW4iOiJzb2xldm9pIiwibG9naW5BdCI6MTc4MDc4MTQ1MDQxNiwiaWF0IjoxNzgwNzgxNDUwLCJleHAiOjE3OTYzMzM0NTB9.F4PiZDC957bKK8DGY0VGliENPB3YIwpFqsunzChAdTw"
+# ИСПРАВЛЕНО: Установлен ваш точный свежий токен авторизации
+ROSPLAT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidHJhZGVyIiwiaWQiOjMzMzgzOCwibG9naW4iOiJzb2xldm9pIiwibG9naW5BdCI6MTc4MTg5MDQ2MzMyMCwiaWF0IjoxNzgxODkwNDYzLCJleHAiOjE3OTc0NDI0NjN9.wZBywaGECMcRdEgp9-HBkv2kaElh_t_QR1m_aUyxu-4"
 
-# Ваши новые куки DDoS-Guard собранные в правильную строку
+# Ваши актуальные куки DDoS-Guard собранные в правильную строку
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/15",
     "Accept": "application/json",
@@ -54,14 +54,24 @@ def get_payouts():
             
             if isinstance(raw_data, list):
                 for row in raw_data:
+                    # Разбираем массив колонок выплат РосПлата по индексам
                     if isinstance(row, list) and len(row) >= 6:
                         payouts.append({
-                            "id": row[0],
-                            "method": row[1],
-                            "details": f"{row[2]} | {row[3]}" if len(row) > 4 else row[2],
-                            "amount": row[4] if len(row) > 4 else row[3],
-                            "status": "В ожидании",
-                            "date": f"{row[5]} {row[6]}" if len(row) > 6 else row[5]
+                            "id": row[0],                                        # ID заявки
+                            "method": row[1],                                    # Банк
+                            "details": f"{row[2]} | {row[3]}" if len(row) > 3 else row[2], # Метод + Реквизиты
+                            "amount": row[4] if len(row) > 4 else "0 ₽",         # Сумма вывода
+                            "status": "В ожидании",                              # Статус операции
+                            "date": f"{row[5]}" if len(row) > 5 else ""          # Время и Дата
+                        })
+                    elif isinstance(row, dict):
+                        payouts.append({
+                            "id": row.get("id") or "---",
+                            "method": row.get("bankName") or row.get("method") or "---",
+                            "details": row.get("credentials") or row.get("details") or "---",
+                            "amount": f"{row.get('amount', 0)} ₽",
+                            "status": row.get("status") or "В ожидании",
+                            "date": row.get("date") or ""
                         })
             return jsonify({"status": "success", "data": payouts})
         else:
