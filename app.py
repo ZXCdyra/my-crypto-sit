@@ -8,60 +8,66 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
-BASE_API = "https://rosplat.cash"
+# СЮДА ВСТАВЬТЕ ВАШ СВЕЖИЙ Bearer-ТОКЕН, ЕСЛИ ОН ОБНОВИЛСЯ ПОСЛЕ ВВОДА КАПЧИ
+ROSPLAT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidHJhZGVyIiwiaWQiOjMzMzgzOCwibG9naW4iOiJzb2xldm9pIiwibG9naW5BdCI6MTc4MDc4MTQ1MDQxNiwiaWF0IjoxNzgwNzgxNDUwLCJleHAiOjE3OTYzMzM0NTB9.F4PiZDC957bKK8DGY0VGliENPB3YIwpFqsunzChAdTw"
+
+# Ваши новые куки DDoS-Guard собранные в правильную строку
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/15",
     "Accept": "application/json",
+    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
     "Content-Type": "application/json",
     "Origin": "https://rosplat.cash",
-    "Referer": "https://rosplat.cash/"
+    "Referer": "https://rosplat.cash/",
+    "authorization": ROSPLAT_TOKEN,
+    "Cookie": "__ddg1_=QJcg549VFuU09XEmV4PE; __ddg8_=r0lrSjXx4tjh8Mxm; __ddg9_=89.105.212.138; __ddg10_=1781890718"
 }
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Тестовый эндпоинт, который выведет результат авторизации прямо на экран вашего сайта
+# 1. Сбор Сделок
 @app.route('/api/rosplat-data')
-def test_login():
+def get_deals():
     try:
-        # Проверяем первый вариант названий полей формы
-        payload1 = {"login": "Solevoi", "pass": "112nataliA"}
-        res1 = requests.post(f"{BASE_API}/auth/login", json=payload1, headers=HEADERS, verify=False, timeout=10)
-        
-        # Проверяем второй вариант названий полей формы (username/password)
-        payload2 = {"username": "Solevoi", "password": "112nataliA"}
-        res2 = requests.post(f"{BASE_API}/auth/login", json=payload2, headers=HEADERS, verify=False, timeout=10)
-        
-        # Собираем ответы в один объект
-        debug_info = {
-            "variant_1_status": res1.status_code,
-            "variant_1_body": res1.json() if res1.status_code == 200 else res1.text,
-            "variant_2_status": res2.status_code,
-            "variant_2_body": res2.json() if res2.status_code == 200 else res2.text
-        }
-        
-        # Превращаем результат в массив строк, чтобы ваш index.html смог вывести его как таблицу ордеров
-        return jsonify({
-            "status": "success",
-            "data": [{
-                "id": "ТЕСТ_API",
-                "bank": f"Вариант 1 Статус: {res1.status_code}",
-                "method": "Кликните",
-                "credentials": f"В1 Ответ: {str(debug_info['variant_1_body'])[:40]}...",
-                "amount": f"В2 Статус: {res2.status_code}",
-                "time": "Отладка",
-                "date": f"В2 Ответ: {str(debug_info['variant_2_body'])[:30]}..."
-            }]
-        })
+        url = "https://rosplat.cash"
+        res = requests.get(url, headers=HEADERS, verify=False, timeout=10)
+        if res.status_code == 200:
+            return jsonify({"status": "success", "data": res.json()})
+        else:
+            print(f"РосПлат Сделки вернул статус: {res.status_code}")
     except Exception as e:
-        return jsonify({
-            "status": "success",
-            "data": [{"id": "ОШИБКА", "bank": str(e), "method": "ERR", "credentials": "", "amount": "", "time": "", "date": ""}]
-        })
+        print(f"Ошибка запроса сделок: {e}")
+    return jsonify({"status": "success", "data": []})
 
+# 2. Сбор Выплат
 @app.route('/api/rosplat-payouts')
-def test_payouts():
+def get_payouts():
+    try:
+        url = "https://rosplat.cash"
+        res = requests.get(url, headers=HEADERS, verify=False, timeout=10)
+        
+        if res.status_code == 200:
+            raw_data = res.json()
+            payouts = []
+            
+            if isinstance(raw_data, list):
+                for row in raw_data:
+                    if isinstance(row, list) and len(row) >= 6:
+                        payouts.append({
+                            "id": row[0],
+                            "method": row[1],
+                            "details": f"{row[2]} | {row[3]}" if len(row) > 4 else row[2],
+                            "amount": row[4] if len(row) > 4 else row[3],
+                            "status": "В ожидании",
+                            "date": f"{row[5]} {row[6]}" if len(row) > 6 else row[5]
+                        })
+            return jsonify({"status": "success", "data": payouts})
+        else:
+            print(f"РосПлат Выплаты вернул статус: {res.status_code}")
+    except Exception as e:
+        print(f"Ошибка запроса выплат: {e}")
     return jsonify({"status": "success", "data": []})
 
 if __name__ == '__main__':
